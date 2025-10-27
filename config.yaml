@@ -1,0 +1,8 @@
+input_dir: "/nav/project3599/fastqs/"
+output_dir: "/nav/project3599/Analysis/"
+
+# Workflow parameters
+classifier: "kraken2"
+db: "ncbi_16s_18s"
+profile: "standard"
+#
