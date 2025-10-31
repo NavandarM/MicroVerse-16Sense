@@ -1,5 +1,5 @@
 # MicroVerse-16Sense: 
-A snakemake workflow for processing 16s ONT data
+<h2>A snakemake workflow for processing 16s ONT data</h2>
 
 Usages: snakemake -s Snakefile.smk   --use-conda
 
