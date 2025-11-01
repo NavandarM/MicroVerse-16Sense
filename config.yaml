@@ -1,8 +1,7 @@
-input_dir: "/nav/project3599/fastqs/"
-output_dir: "/nav/project3599/Analysis/"
+input_dir: "/data/manke/processing1/navandar/Denboba/YoungVsOld/fastq/"
+output_dir: "/data/manke/processing1/navandar/Denboba/YoungVsOld/analYSIS"
 
 # Workflow parameters
 classifier: "kraken2"
 db: "ncbi_16s_18s"
-profile: "standard"
 #
