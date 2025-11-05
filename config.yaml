@@ -1,3 +1,3 @@
-input_dir: "/path/project/fastq/"
-output_dir: "/path/project/analysis"
-
+input_dir: "/path/to/fastqs/"
+output_dir: "/path/to/analysis/"
+metadata_file: "/pah/to/sample_metadata.tsv" ## or AI
