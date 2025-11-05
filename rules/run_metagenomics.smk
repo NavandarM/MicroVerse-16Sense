@@ -2,7 +2,7 @@ rule run_wf_metagenomics:
     input:
         fastq_dir=config["input_dir"]
     output:
-        epi2me_flag= output_dir + "workflow_complete.txt",
+        epi2me_flag= output_dir + "flags/epi2me.done",
     conda:
         "../envs/nextflow_env.yaml"
     params:

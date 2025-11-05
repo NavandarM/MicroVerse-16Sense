@@ -11,7 +11,7 @@ include: "rules/beta_diversity.smk"
 
 rule all:
     input:
-        output_dir + "workflow_complete.txt",
-        output_dir + "results/abundance.done",
-        output_dir + "results/alpha_diversity.done",
-        output_dir + "results/beta_diversity.done"
+        output_dir + "flags/epi2me.done",
+        output_dir + "flags/abundance.done",
+        output_dir + "flags/alpha_diversity.done",
+        output_dir + "flags/beta_diversity.done"
