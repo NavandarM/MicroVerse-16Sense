@@ -1,0 +1,11 @@
+name: diversity_env
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - numpy=1.23.5
+  - pandas
+  - matplotlib=3.6.*
+  - seaborn
+  - scikit-bio=0.5.8
+  - adjustText
