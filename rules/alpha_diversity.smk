@@ -7,7 +7,7 @@ rule alpha_diversity:
         "../envs/diversity_env.yaml"
     params:
         abund = output_dir + "abundance_table_species.tsv",
-        meta = config["metadata_file"],
+        meta = config['metadata_file'],
         group_col = "Group",
         outdir = output_dir + "results",
         show_pvalues= 1

@@ -1,4 +1,3 @@
-print( output_dir + "abundance_table_species.tsv")
 rule beta_diversity:
     input:
         output_dir + "flags/alpha_diversity.done"
@@ -8,7 +7,7 @@ rule beta_diversity:
         "../envs/diversity_env.yaml"
     params:
         abund = output_dir + "abundance_table_species.tsv",
-        meta = config["metadata_file"],
+        meta = config['metadata_file'],
         outdir = output_dir + "results",
         group_col = "Group",
         metrics = "braycurtis,jaccard,euclidean",
