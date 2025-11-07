@@ -3,6 +3,5 @@
 Usages: snakemake -s Snakefile.smk   --use-conda
 
 Requirements:
-Edit the config file and update below variables:
--   Indir
--   Outdir
+- Singularity or docker
+- Edit and update the config file
