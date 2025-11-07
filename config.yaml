@@ -1,3 +1,6 @@
 input_dir: "/path/to/fastqs/"
 output_dir: "/path/to/analysis/"
 metadata_file: "/pah/to/sample_metadata.tsv"
+storage_dir: "/path/tp/storagespace" # recommend to use it. Specify the location where you would like to store the autodownloaded database and taxonomy. Use it if you don't provide the database_dir and taxonomy.
+database_dir: "" ## -optional param
+taxonomy_dir: ""  ## -optional param
