@@ -23,8 +23,8 @@ python script/plot_abundance.py <input_dir> <output_dir> [top_n]
 Inputs:
 - input_dir: Path to the directory containing *.kraken2_bracken.report files.
 - output_dir: Directory to save the results.<br>
-Optional:
-- top_n (default = 10): Number of top species to display in the stacked bar plot.
+  Optional:
+    - top_n (default = 10): Number of top species to display in the stacked bar plot.<br>
 Output:
 - raw_counts_for_deseq2.txt: Combined species-level count table for all samples.
 - composition_plot.pdf: Stacked bar plot showing relative abundances of the top species across samples, saved in the specified output directory.
