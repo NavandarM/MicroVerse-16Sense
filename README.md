@@ -6,7 +6,7 @@ Requirements:
 - Singularity or docker
 - Edit and update the config file
 
-
+---
 You can also use the individual scripts to perform **abundance**, **alpha diversity**, and **beta diversity** analyses.
 
 ###Abundance Plot
@@ -42,7 +42,7 @@ python script/alpha_diversity.py <abundance_file> <metadata_file> <output_dir> [
 **Description:**  
 Calculates alpha diversity metrics (**Shannon**, **Simpson**, **Observed**, **Chao1**) from a species abundance table, and generates grouped boxplots with optional p-value annotations.
 
-
+---
 
 ### Beta Diversity
 
