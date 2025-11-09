@@ -20,6 +20,15 @@ You can also use the individual scripts to perform **abundance**, **alpha divers
 ```bash
 python script/plot_abundance.py <input_dir> <output_dir> [top_n]
 ```
+Inputs:
+- input_dir: Path to the directory containing *.kraken2_bracken.report files.
+- output_dir: Directory to save the results.<br>
+Optional:
+- top_n (default = 10): Number of top species to display in the stacked bar plot.
+Output:
+- raw_counts_for_deseq2.txt: Combined species-level count table for all samples.
+- composition_plot.pdf: Stacked bar plot showing relative abundances of the top species across samples, saved in the specified output directory.
+
 **Example**
 `python script/plot_abundance.py data/kraken_reports/ results/ 10`
 
@@ -44,7 +53,7 @@ python script/alpha_diversity.py <abundance_file> <metadata_file> <output_dir> [
 Inputs:
 - abundance_file: Tab-delimited table of species/OTU counts (rows = species, columns = samples).
 - metadata_file: Tab-delimited metadata linking samples to experimental groups.
-- output_dir: Directory for saving results.
+- output_dir: Directory for saving results.<br>
 Optional:
 - group_col (default = "Group"): Column in metadata to define sample groups
 - show_pvalues (default = 0): Whether to display p-values on the plots (0 = no, 1 = yes).
@@ -69,6 +78,17 @@ python script/beta_diversity.py <abundance_file> <metadata_file> <output_dir> [g
 **Example**
 `python script/beta_diversity.py data/abundance.tsv data/metadata.tsv results/ Group braycurtis,jaccard,euclidean false,false,false`
 
+Inputs:
+- abundance_file: Tab-delimited table of species/OTU counts (rows = species, columns = samples).
+- metadata_file: Tab-delimited metadata linking samples to experimental groups.
+- output_dir: Directory to save results.<br>
+Optional:
+- group_col (default = "Group"): Column in metadata for grouping samples.
+- metrics_comma_separated (default = "braycurtis,jaccard,euclidean"): Beta diversity metrics to compute.
+- clr_flags_comma_separated (default = false,false,false): Whether to apply CLR transformation for each metric (true or false).
+Output:
+- beta_diversity_plots.pdf: PCoA scatterplots for the selected beta diversity metrics, colored by sample group, saved in the specified output directory.
+  
 **Description:**  
 Computes beta diversity metrics (**Bray–Curtis**, **Jaccard**, **Euclidean**, and **UniFrac**) from an abundance table, performs **Principal Coordinates Analysis (PCoA)**, and plots PCoA scatterplots with non-overlapping sample labels.
 
