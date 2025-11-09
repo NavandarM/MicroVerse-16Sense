@@ -26,6 +26,7 @@ Reads **Bracken/Kraken2** report files (`*.kraken2_bracken.report`) from a direc
 - A **combined count table** (for DESeq2 or downstream analyses)  
 - A **stacked bar plot** showing the top 10 most abundant species per sample  
 
+---
 
 ### Alpha Diversity
 **Script:**  
