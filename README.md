@@ -41,6 +41,16 @@ python script/alpha_diversity.py <abundance_file> <metadata_file> <output_dir> [
 **Example:**
 `python script/alpha_diversity.py data/abundance.tsv data/metadata.tsv results/ Group 1`
 
+Inputs:
+- abundance_file: Tab-delimited table of species/OTU counts (rows = species, columns = samples).
+- metadata_file: Tab-delimited metadata linking samples to experimental groups.
+- output_dir: Directory for saving results.
+Optional:
+- group_col (default = "Group"): Column in metadata to define sample groups
+- show_pvalues (default = 0): Whether to display p-values on the plots (0 = no, 1 = yes).
+Output:
+- alpha_diversity_plots.pdf or alpha_diversity_with_pvalues.pdf: Boxplots summarizing alpha diversity metrics (Shannon, Simpson, Observed OTUs, Chao1) per sample group.
+
 **Description:**  
 Calculates alpha diversity metrics (**Shannon**, **Simpson**, **Observed**, **Chao1**) from a species abundance table, and generates grouped boxplots with optional p-value annotations.
 
