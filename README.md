@@ -9,7 +9,7 @@ Requirements:
 - Edit and update the config file
 
 ---
-You can also use the individual scripts to perform **abundance**, **alpha diversity**, and **beta diversity** analyses.
+Apart from the pipeline, you can also use the individual scripts to perform **abundance**, **alpha diversity**, and **beta diversity** analyses.
 
 ###Abundance Plot
 
