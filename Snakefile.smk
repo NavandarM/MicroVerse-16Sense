@@ -1,4 +1,4 @@
-configfile: "config1.yaml"
+configfile: "config.yaml"
 
 output_dir=config["output_dir"]
 
