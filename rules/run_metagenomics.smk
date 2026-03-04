@@ -9,7 +9,7 @@ rule run_wf_metagenomics:
         nextflowlogs = output_dir + "log",
         database_dir = f"--database {config['database_dir']}" if config['database_dir'] else "",
         taxonomy_dir = f"--taxonomy {config['taxonomy_dir']}" if config['taxonomy_dir'] else "",
-        profile_tool = config['profile_tool']
+        profile_tool = config['profile_tool'],
         work_dir = output_dir + "nf_work",
         storage_dir = f"--store_dir {config['storage_dir']}" if config['storage_dir'] else ""
     shell:
