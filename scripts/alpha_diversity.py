@@ -44,8 +44,8 @@ def plot_alpha_diversity(alpha, group_col="Group", output_file="alpha_diversity_
 
     for ax, metric in zip(axes.flat, metrics):
         sns.boxplot(
-            x=group_col, y=metric, data=alpha,
-            palette="Set2", showcaps=False, fliersize=0, ax=ax, width=0.5
+            x=group_col, y=metric, data=alpha, palette="Set2",
+            showcaps=False, fliersize=0, ax=ax, width=0.5
         )
         sns.stripplot(
             x=group_col, y=metric, data=alpha,

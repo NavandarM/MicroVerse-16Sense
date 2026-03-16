@@ -58,26 +58,81 @@ def main(input_dir: str, output_dir: str, top_n: int = 10):
     combined_counts.to_csv(counts_path, sep="\t", index=True)
 
     # plotting ...
+    # top_species = combined_df.sum(axis=1).sort_values(ascending=False).head(top_n).index
+    # other = combined_df[~combined_df.index.isin(top_species)].sum()
+    # filtered_df = combined_df.loc[top_species]
+    # filtered_df.loc["Other"] = other
+    # plot_df = filtered_df.T
+
+    # plt.figure(figsize=(12, 7))
+    # plot_df.plot(kind="bar", stacked=True, colormap="tab20")
+    # plt.ylabel("Relative abundance (%)")
+    # plt.xlabel("Sample")
+    # plt.title(f"Top {top_n} Species-level Composition")
+    # plt.xticks(rotation=45, ha="right")
+    # plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", title="Species")
+    # plt.tight_layout()
+    # plot_path = os.path.join(output_dir, f"composition_plot.pdf")
+    # plt.savefig(plot_path, dpi=300, bbox_inches="tight")
+    # plt.close()
+    # print(f"Saved: {counts_path}")
+    # print(f"Saved: {plot_path}")
+
+
+    # -----------------------------
+    # Prepare data
+    # -----------------------------
+    # combined_df = pandas DataFrame (rows=species, columns=samples)
     top_species = combined_df.sum(axis=1).sort_values(ascending=False).head(top_n).index
     other = combined_df[~combined_df.index.isin(top_species)].sum()
     filtered_df = combined_df.loc[top_species]
     filtered_df.loc["Other"] = other
-    plot_df = filtered_df.T
+    plot_df = filtered_df.T  # transpose for plotting
 
-    plt.figure(figsize=(12, 7))
-    plot_df.plot(kind="bar", stacked=True, colormap="tab20")
-    plt.ylabel("Relative abundance (%)")
-    plt.xlabel("Sample")
-    plt.title(f"Top {top_n} Species-level Composition")
-    plt.xticks(rotation=45, ha="right")
-    plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", title="Species")
-    plt.tight_layout()
-    plot_path = os.path.join(output_dir, f"composition_plot.pdf")
+    # -----------------------------
+    # Create figure and plot
+    # -----------------------------
+    fig, ax = plt.subplots(figsize=(12, 6))
+    plot_df.plot(kind="bar", stacked=True, colormap="tab20", ax=ax, legend=False)
+
+    ax.set_ylabel("Relative abundance (%)")
+    ax.set_xlabel("Sample")
+    ax.set_title(f"Top {top_n} Species-level Composition")
+    ax.set_xticklabels(plot_df.index, rotation=45, ha="right")
+
+    # -----------------------------
+    # Extract handles and labels
+    # -----------------------------
+    handles, labels = ax.get_legend_handles_labels()
+    ncol_value = min(len(labels), 5)
+
+    # -----------------------------
+    # Increase bottom margin to fit legend
+    # -----------------------------
+    fig.subplots_adjust(bottom=0.35)  # leave extra space for the legend
+
+    # -----------------------------
+    # Add legend outside figure
+    # -----------------------------
+    fig.legend(
+        handles, labels,
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.05),  # x=center, y below figure
+        bbox_transform=fig.transFigure,  # important: use figure coordinates
+        ncol=ncol_value,
+        frameon=True,
+        markerscale=1.5,
+        title="Species"
+    )
+
+    # -----------------------------
+    # Save figure
+    # -----------------------------
+    plot_path = os.path.join(output_dir, "composition_plot.pdf")
     plt.savefig(plot_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"Saved: {counts_path}")
-    print(f"Saved: {plot_path}")
 
+    print(f"Saved: {plot_path}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
