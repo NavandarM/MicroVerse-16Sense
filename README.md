@@ -8,6 +8,13 @@ Requirements:
 - Singularity or docker
 - Edit and update the config file
 
+The epi2me `wf-metagenomics` step is run with Snakemake's `handover: True`: Snakemake hands the whole
+allocation (`--cores`, `--resources`) over to Nextflow, runs it on the main host and waits for it.
+Nextflow does its own scheduling and is started with `-resume`, so re-running Snakemake after a failure
+continues from `<output_dir>/nf_work`. To let Nextflow submit jobs to a cluster, point `nextflow_config`
+in `config.yaml` to a Nextflow config (e.g. `process.executor = 'slurm'`). The Nextflow log is written to
+`<output_dir>/log/nextflow.log`.
+
 ---
 Apart from the pipeline, you can also use the individual scripts to perform **abundance**, **alpha diversity**, and **beta diversity** analyses.
 
