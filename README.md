@@ -4,17 +4,16 @@
 Nextflow workflow for taxonomic classification and then produces abundance, alpha-diversity and
 beta-diversity plots. No Snakemake needed: a single script, `microverse.py`, runs the steps.
 
-> This is the `python_wrapper` branch. The Snakemake version is on `handover_smk`.
+> This is the `python_wrapper` branch. The Snakemake version is on `main`.
 
 ## Branches
 
 | Branch | How the pipeline is run | Notes |
 |---|---|---|
-| `main` | Snakemake | original version |
-| `handover_smk` | Snakemake, Nextflow step with `handover: True` | recommended |
+| `main` | Snakemake, Nextflow step with `handover: True` | recommended |
 | `python_wrapper` | plain Python script, no Snakemake | lightweight alternative |
 
-Both new versions run exactly the same Nextflow command and scripts. In a benchmark on 12 samples
+Both versions run exactly the same Nextflow command and scripts. In a benchmark on 12 samples
 (42 GB fastq) they took the same time (~15 min) and produced identical species tables. They differ in
 how they behave on re-runs, see [Re-running and recovering](#re-running-and-recovering).
 
