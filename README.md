@@ -1,31 +1,156 @@
-# MicroVerse-16Sense: <h3>A snakemake workflow for processing 16s ONT data</h3>
+# MicroVerse-16Sense
 
-Usages: 
-```bash
-snakemake -s Snakefile.smk   --use-conda
+**A Snakemake workflow for 16S rRNA Oxford Nanopore data.** It runs the epi2me
+`wf-metagenomics` Nextflow workflow for taxonomic classification and then produces abundance,
+alpha-diversity and beta-diversity plots.
+
+> This is the `handover_smk` branch: the Nextflow step uses Snakemake's `handover` feature.
+
+## Branches
+
+| Branch | How the pipeline is run | Notes |
+|---|---|---|
+| `main` | Snakemake | original version |
+| `handover_smk` | Snakemake, Nextflow step with `handover: True` | recommended |
+| `python_wrapper` | plain Python script, no Snakemake | lightweight alternative |
+
+Both new versions run exactly the same Nextflow command and scripts. In a benchmark on 12 samples
+(42 GB fastq) they took the same time (~15 min) and produced identical species tables. They differ in
+how they behave on re-runs, see [Re-running and recovering](#re-running-and-recovering).
+
+## Pipeline
+
+```mermaid
+flowchart LR
+    A[fastq per sample] --> B["epi2me wf-metagenomics<br/>(Nextflow: Kraken2 + Bracken)"]
+    B --> C[abundance plot]
+    C --> D[alpha diversity]
+    D --> E[beta diversity]
 ```
-Requirements:
-- Singularity or docker
-- Edit and update the config file
 
-The epi2me `wf-metagenomics` step is run with Snakemake's `handover: True`: Snakemake hands the whole
-allocation (`--cores`, `--resources`) over to Nextflow, runs it on the main host and waits for it.
-Nextflow does its own scheduling and is started with `-resume`, so re-running Snakemake after a failure
-continues from `<output_dir>/nf_work`. To let Nextflow submit jobs to a cluster, point `nextflow_config`
-in `config.yaml` to a Nextflow config (e.g. `process.executor = 'slurm'`). The Nextflow log is written to
-`<output_dir>/log/nextflow.log`.
+| Step | What it does | Main output |
+|---|---|---|
+| epi2me | read QC, Kraken2 classification, Bracken abundance ([wf-metagenomics](https://github.com/epi2me-labs/wf-metagenomics)) | `abundance_table_species.tsv`, `bracken/` |
+| abundance | combines Bracken reports, stacked bar plot of the top species | `results/composition_plot.pdf`, `results/raw_counts_for_deseq2.txt` |
+| alpha diversity | Shannon, Simpson, Observed, Chao1 per group | `results/alpha_diversity_plots.pdf` (or `..._with_pvalues.pdf`) |
+| beta diversity | Bray–Curtis, Jaccard, Euclidean distances + PCoA | `results/beta_diversity_plots.pdf` |
 
----
+## Requirements
+
+- [Snakemake](https://snakemake.readthedocs.io) with conda (tested with 9.1.9)
+- Singularity/Apptainer or Docker for the epi2me containers
+- Tool versions for each step are pinned in `envs/*.yaml` and installed by Snakemake
+
+## Quick start
+
+```bash
+git clone -b handover_smk git@github.com:NavandarM/MicroVerse-16Sense.git
+cd MicroVerse-16Sense
+# edit config.yaml
+snakemake -s Snakefile.smk --use-conda --cores 16 -n   # dry run: show what would run
+snakemake -s Snakefile.smk --use-conda --cores 16
+```
+
+On an HPC module system, load the container runtime first, e.g. `module load apptainer`.
+
+### Input
+
+`input_dir` contains one folder per sample; the folder name is the sample name:
+
+```
+fastqs/
+├── CV0834m12wFec/
+│   └── CV0834m12wFec.fastq.gz
+├── FMTcc4w0864m11wFec/
+│   └── FMTcc4w0864m11wFec.fastq.gz
+└── ...
+```
+
+The metadata file is tab-separated. The first column holds the sample names (same as the folder
+names), and one column holds the group used in the diversity plots (default `Group`):
+
+```
+sample	Group	mouse_id	age_weeks
+CV0834m12wFec	CV	0834	12
+FMTcc4w0864m11wFec	FMTcc4w	0864	11
+```
+
+### Configuration (`config.yaml`)
+
+| Key | Required | Description |
+|---|---|---|
+| `input_dir` | yes | folder with one sub-folder of fastq files per sample |
+| `output_dir` | yes | where everything is written (end with `/`) |
+| `metadata_file` | yes | sample metadata, see above |
+| `storage_dir` | recommended | where epi2me stores the downloaded database and taxonomy; reused by later runs |
+| `database_dir`, `taxonomy_dir` | optional | use your own Kraken2 database / taxonomy instead of the download |
+| `profile_tool` | optional | Nextflow profile: `singularity` (default) or `standard` (docker) |
+| `nextflow_config` | optional | extra Nextflow config file, e.g. to run on a cluster (see below) |
+
+The group column, number of top species and beta metrics are set in `rules/*.smk` (`params:`).
+
+### Output
+
+```
+output_dir/
+├── abundance_table_species.tsv    # species x sample counts (epi2me)
+├── bracken/  kraken2/             # per-sample reports (epi2me)
+├── wf-metagenomics-report.html    # epi2me report
+├── execution/                     # Nextflow trace, timeline, report
+├── results/                       # plots and count table from the Python scripts
+├── log/nextflow.log
+├── flags/                         # <step>.done markers
+└── nf_work/                       # Nextflow work dir (large, can be deleted when finished)
+```
+
+## How the Nextflow step is run (handover)
+
+Step 1 starts another workflow manager, Nextflow. The rule `run_wf_metagenomics` is marked with
+`handover: True`, which tells Snakemake:
+
+- give this job all resources Snakemake was started with and run nothing else next to it,
+- run it on the machine where Snakemake runs (never as a cluster job),
+- wait until Nextflow is finished and use its exit code.
+
+Nextflow still schedules its own tasks. Snakemake decides *whether* the step runs, can stop it and
+waits for it, but does not see or control the individual Nextflow tasks.
+
+Note: `--cores` is not passed on to Nextflow; the local Nextflow executor uses all CPUs of the machine.
+To limit it, put `executor.cpus = 16` in the file given as `nextflow_config`.
+
+### Running Nextflow on a cluster
+
+Point `nextflow_config` to a Nextflow config, for example:
+
+```groovy
+process.executor = 'slurm'
+process.queue    = 'normal'
+```
+
+Nextflow then submits its own jobs; everything else runs on the machine where you start the pipeline.
+
+## Re-running and recovering
+
+| Situation | What to do |
+|---|---|
+| Interrupted with Ctrl-C | run the same command again; Nextflow resumes (`-resume`) and reuses finished tasks |
+| Snakemake killed hard (crash, out of memory, `kill -9`) and now reports `LockException` | `snakemake -s Snakefile.smk --unlock`, then run again with `--rerun-incomplete` |
+| A step failed | fix the cause and run again; finished steps are not repeated |
+| A setting in `config.yaml` changed | run again; Snakemake notices changed parameters and reruns the affected steps |
+| Rerun everything | `--forceall` |
+
+## Individual scripts
+
 Apart from the pipeline, you can also use the individual scripts to perform **abundance**, **alpha diversity**, and **beta diversity** analyses.
 
-###Abundance Plot
+### Abundance plot
 
 **Script:**  
-`script/plot_abundance.py`
+`scripts/plot_abundance.py`
 
 **Usage:**  
 ```bash
-python script/plot_abundance.py <input_dir> <output_dir> [top_n]
+python scripts/plot_abundance.py <input_dir> <output_dir> [top_n]
 ```
 Inputs:
 - input_dir: Path to the directory containing *.kraken2_bracken.report files.
@@ -37,7 +162,7 @@ Output:
 - composition_plot.pdf: Stacked bar plot showing relative abundances of the top species across samples, saved in the specified output directory.
 
 **Example**
-`python script/plot_abundance.py data/kraken_reports/ results/ 10`
+`python scripts/plot_abundance.py data/kraken_reports/ results/ 10`
 
 **Description:**  
 Reads **Bracken/Kraken2** report files (`*.kraken2_bracken.report`) from a directory, aggregates **species-level abundances**, and generates:  
@@ -48,14 +173,14 @@ Reads **Bracken/Kraken2** report files (`*.kraken2_bracken.report`) from a direc
 
 ### Alpha Diversity
 **Script:**  
-`script/alpha_diversity.py`
+`scripts/alpha_diversity.py`
 
 **Usage:**  
 ```bash
-python script/alpha_diversity.py <abundance_file> <metadata_file> <output_dir> [group_col] [show_pvalues]
+python scripts/alpha_diversity.py <abundance_file> <metadata_file> <output_dir> [group_col] [show_pvalues]
 ```
 **Example:**
-`python script/alpha_diversity.py data/abundance.tsv data/metadata.tsv results/ Group 1`
+`python scripts/alpha_diversity.py data/abundance.tsv data/metadata.tsv results/ Group 1`
 
 Inputs:
 - abundance_file: Tab-delimited table of species/OTU counts (rows = species, columns = samples).
@@ -75,15 +200,14 @@ Calculates alpha diversity metrics (**Shannon**, **Simpson**, **Observed**, **Ch
 ### Beta Diversity
 
 **Script:**  
-`script/beta_diversity.py`
-
+`scripts/beta_diversity.py`
 
 **Usage:**  
 ```bash
-python script/beta_diversity.py <abundance_file> <metadata_file> <output_dir> [group_col] [metrics_comma_separated] [clr_flags_comma_separated]
+python scripts/beta_diversity.py <abundance_file> <metadata_file> <output_dir> [group_col] [metrics_comma_separated] [clr_flags_comma_separated]
 ```
 **Example**
-`python script/beta_diversity.py data/abundance.tsv data/metadata.tsv results/ Group braycurtis,jaccard,euclidean false,false,false`
+`python scripts/beta_diversity.py data/abundance.tsv data/metadata.tsv results/ Group braycurtis,jaccard,euclidean false,false,false`
 
 Inputs:
 - abundance_file: Tab-delimited table of species/OTU counts (rows = species, columns = samples).
@@ -98,4 +222,3 @@ Output:
   
 **Description:**  
 Computes beta diversity metrics (**Bray–Curtis**, **Jaccard**, **Euclidean**, and **UniFrac**) from an abundance table, performs **Principal Coordinates Analysis (PCoA)**, and plots PCoA scatterplots with non-overlapping sample labels.
-
