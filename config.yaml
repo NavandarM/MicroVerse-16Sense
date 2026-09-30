@@ -6,3 +6,10 @@ database_dir: "" ## -optional param
 taxonomy_dir: ""  ## -optional param
 profile_tool: "singularity" # Nextflow profile for epi2me: "singularity" or "standard" (docker)
 nextflow_config: "" ## -optional param. Path to a custom nextflow.config (e.g. executor = 'slurm') so Nextflow can submit its own jobs to the cluster.
+
+# plotting / diversity settings (optional, defaults shown)
+group_col: "Group"   # metadata column used to group samples
+top_n: 10            # number of top species in the composition plot
+show_pvalues: true   # p-values on the alpha diversity plots
+beta_metrics: "braycurtis,jaccard,euclidean"
+clr_flags: "False,False,False"  # CLR transform per beta metric

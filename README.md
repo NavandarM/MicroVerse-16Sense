@@ -1,18 +1,27 @@
-# MicroVerse-16Sense: <h3>A snakemake workflow for processing 16s ONT data</h3>
+# MicroVerse-16Sense: <h3>A python pipeline for processing 16s ONT data</h3>
 
-Usages: 
+Usage:
 ```bash
-snakemake -s Snakefile.smk   --use-conda
+python microverse.py -c config.yaml
 ```
 Requirements:
+- Python 3 with PyYAML
+- conda (the tool envs in `envs/` are created on first use under `.conda_envs/`)
 - Singularity or docker
 - Edit and update the config file
 
-The epi2me `wf-metagenomics` step is run with Snakemake's `handover: True`: Snakemake hands the whole
-allocation (`--cores`, `--resources`) over to Nextflow, runs it on the main host and waits for it.
-Nextflow does its own scheduling and is started with `-resume`, so re-running Snakemake after a failure
-continues from `<output_dir>/nf_work`. To let Nextflow submit jobs to a cluster, point `nextflow_config`
-in `config.yaml` to a Nextflow config (e.g. `process.executor = 'slurm'`). The Nextflow log is written to
+Steps, run in this order: `epi2me` (epi2me-labs/wf-metagenomics via Nextflow) -> `abundance` -> `alpha_diversity` -> `beta_diversity`.
+
+Useful options:
+- `-n` / `--dry-run`: print the commands without running anything
+- `--steps abundance alpha_diversity`: run only some steps
+- `--force`: rerun steps that are already done
+- `--no-conda`: use the tools from the current environment instead of `envs/*.yaml`
+
+Each finished step writes `<output_dir>/flags/<step>.done` and is skipped next time; when a step is rerun,
+all steps after it are rerun too. Nextflow is started with `-resume`, so after a failure it continues from
+`<output_dir>/nf_work`. To let Nextflow submit jobs to a cluster, point `nextflow_config` in `config.yaml`
+to a Nextflow config (e.g. `process.executor = 'slurm'`). The Nextflow log is written to
 `<output_dir>/log/nextflow.log`.
 
 ---
