@@ -4,17 +4,14 @@
 `wf-metagenomics` Nextflow workflow for taxonomic classification and then produces abundance,
 alpha-diversity and beta-diversity plots.
 
-> This is the `handover_smk` branch: the Nextflow step uses Snakemake's `handover` feature.
-
 ## Branches
 
 | Branch | How the pipeline is run | Notes |
 |---|---|---|
-| `main` | Snakemake | original version |
-| `handover_smk` | Snakemake, Nextflow step with `handover: True` | recommended |
+| `main` | Snakemake, Nextflow step with `handover: True` | recommended |
 | `python_wrapper` | plain Python script, no Snakemake | lightweight alternative |
 
-Both new versions run exactly the same Nextflow command and scripts. In a benchmark on 12 samples
+Both versions run exactly the same Nextflow command and scripts. In a benchmark on 12 samples
 (42 GB fastq) they took the same time (~15 min) and produced identical species tables. They differ in
 how they behave on re-runs, see [Re-running and recovering](#re-running-and-recovering).
 
@@ -44,7 +41,7 @@ flowchart LR
 ## Quick start
 
 ```bash
-git clone -b handover_smk git@github.com:NavandarM/MicroVerse-16Sense.git
+git clone git@github.com:NavandarM/MicroVerse-16Sense.git
 cd MicroVerse-16Sense
 # edit config.yaml
 snakemake -s Snakefile.smk --use-conda --cores 16 -n   # dry run: show what would run
