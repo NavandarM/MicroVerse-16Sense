@@ -77,7 +77,7 @@ FMTcc4w0864m11wFec	FMTcc4w	0864	11
 | Key | Required | Description |
 |---|---|---|
 | `input_dir` | yes | folder with one sub-folder of fastq files per sample |
-| `output_dir` | yes | where everything is written (end with `/`) |
+| `output_dir` | yes | where everything is written (trailing `/` optional) |
 | `metadata_file` | yes | sample metadata, see above |
 | `storage_dir` | recommended | where epi2me stores the downloaded database and taxonomy; reused by later runs |
 | `database_dir`, `taxonomy_dir` | optional | use your own Kraken2 database / taxonomy instead of the download |

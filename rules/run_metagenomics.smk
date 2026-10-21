@@ -7,20 +7,20 @@
 #    starting from scratch after a failure or interruption
 rule run_wf_metagenomics:
     input:
-        fastq_dir=config['input_dir']
+        fastq_dir = config["input_dir"]
     output:
-        epi2me_flag= output_dir + "flags/epi2me.done"
+        epi2me_flag = os.path.join(flags_dir, "epi2me.done")
     log:
-        output_dir + "log/nextflow.log"
+        os.path.join(output_dir, "log", "nextflow.log")
     handover: True
     conda:
         "../envs/nextflow_env.yaml"
     params:
-        nextflowlogs = output_dir + "log",
+        nextflowlogs = os.path.join(output_dir, "log"),
         database_dir = f"--database {config['database_dir']}" if config.get('database_dir') else "",
         taxonomy_dir = f"--taxonomy {config['taxonomy_dir']}" if config.get('taxonomy_dir') else "",
         profile_tool = config.get('profile_tool', "singularity"),
-        work_dir = output_dir + "nf_work",
+        work_dir = os.path.join(output_dir, "nf_work"),
         storage_dir = f"--store_dir {config['storage_dir']}" if config.get('storage_dir') else "",
         nf_config = f"-c {config['nextflow_config']}" if config.get('nextflow_config') else ""
     shell:
@@ -31,21 +31,21 @@ rule run_wf_metagenomics:
         echo "Here is the database dir"
         echo {params.database_dir}
 
-        mkdir -p {params.nextflowlogs}
-        mkdir -p {params.work_dir}
+        mkdir -p {params.nextflowlogs:q}
+        mkdir -p {params.work_dir:q}
 
-        nextflow -log {log} run epi2me-labs/wf-metagenomics \
+        nextflow -log {log:q} run epi2me-labs/wf-metagenomics \
             {params.nf_config} \
             -profile {params.profile_tool} \
-            -work-dir {params.work_dir} \
+            -work-dir {params.work_dir:q} \
             -resume \
             -ansi-log false \
-            --fastq {input.fastq_dir} \
-            --out_dir {output_dir} \
+            --fastq {input.fastq_dir:q} \
+            --out_dir {output_dir:q} \
             --kraken2_memory_mapping \
             {params.database_dir} {params.taxonomy_dir} \
             {params.storage_dir} \
             --keep_bam true
 
-        touch {output.epi2me_flag}
+        touch {output.epi2me_flag:q}
         """

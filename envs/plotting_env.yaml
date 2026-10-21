@@ -1,7 +1,7 @@
 name: plotting_env
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
 dependencies:
   - pandas
   - matplotlib
