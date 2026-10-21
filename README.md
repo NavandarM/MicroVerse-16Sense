@@ -52,30 +52,74 @@ On an HPC module system, load the container runtime first, e.g. `module load app
 
 ### Input
 
-`input_dir` contains one folder per sample; the folder name is the sample name:
+A typical project folder looks like this:
+
+```
+project/
+├── MicroVerse-16Sense/          # this repo
+├── fastqs/                      # input_dir
+├── sample_metadata.tsv          # metadata_file
+├── storage-wf/                  # storage_dir (database download, reused)
+└── analysis/                    # output_dir (created by the pipeline)
+```
+
+#### Fastq files
+
+`input_dir` has one folder per sample, and the folder name is the sample name. Symlinks to the
+original files are fine:
 
 ```
 fastqs/
-├── control1/
-│   └── control1.fastq.gz
-├── control2/
-│   └── control2.fastq.gz
-├── treatment1/
-│   └── treatment1.fastq.gz
-├── treatment2/
-│   └── treatment2.fastq.gz
+├── S01_CTRL_01/
+│   └── S01_CTRL_01.fastq.gz -> /path/to/run/S01_CTRL_01.fastq.gz
+├── S02_CTRL_02/
+│   └── S02_CTRL_02.fastq.gz
+├── S03_TRT_01/
+│   └── S03_TRT_01.fastq.gz
+├── S04_TRT_02/
+│   └── S04_TRT_02.fastq.gz
 └── ...
 ```
 
-The metadata file is tab-separated. The first column holds the sample names (same as the folder
-names), and one column holds the group used in the diversity plots (default `Group`):
+If the sequencing run gives you one `<sample>.fastq.gz` per sample in a single folder, this
+sets up the layout above:
+
+```bash
+mkdir -p fastqs
+for f in /path/to/run/*.fastq.gz; do
+    s=$(basename "$f" .fastq.gz)
+    mkdir -p "fastqs/$s"
+    ln -s "$f" "fastqs/$s/"
+done
+```
+
+#### Metadata
+
+Tab-separated. The first column holds the sample names (same as the folder names), and the
+`Group` column is used to colour and compare samples in the diversity plots. Extra columns are
+ignored.
 
 ```
-sample	Group	age_weeks
-control1	control	6
-control2    control    6
-treatment1	treatment	8
-treatment2    treatment    8    
+sample	Group
+S01_CTRL_01	CTRL
+S02_CTRL_02	CTRL
+S03_TRT_01	TRT
+S04_TRT_02	TRT
+```
+
+Every sample folder should have a row here, and the separators must be tabs, not spaces.
+
+#### Example `config.yaml`
+
+```yaml
+input_dir: "/path/to/project/fastqs"
+output_dir: "/path/to/project/analysis"
+metadata_file: "/path/to/project/sample_metadata.tsv"
+storage_dir: "/path/to/project/storage-wf"
+database_dir: ""
+taxonomy_dir: ""
+profile_tool: "singularity"
+nextflow_config: ""
 ```
 
 ### Configuration (`config.yaml`)
