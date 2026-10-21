@@ -52,17 +52,6 @@ On an HPC module system, load the container runtime first, e.g. `module load app
 
 ### Input
 
-A typical project folder looks like this:
-
-```
-project/
-├── MicroVerse-16Sense/          # this repo
-├── fastqs/                      # input_dir
-├── sample_metadata.tsv          # metadata_file
-├── storage-wf/                  # storage_dir (database download, reused)
-└── analysis/                    # output_dir (created by the pipeline)
-```
-
 #### Fastq files
 
 `input_dir` has one folder per sample, and the folder name is the sample name. Symlinks to the
@@ -70,14 +59,14 @@ original files are fine:
 
 ```
 fastqs/
-├── S01_CTRL_01/
-│   └── S01_CTRL_01.fastq.gz -> /path/to/run/S01_CTRL_01.fastq.gz
-├── S02_CTRL_02/
-│   └── S02_CTRL_02.fastq.gz
-├── S03_TRT_01/
-│   └── S03_TRT_01.fastq.gz
-├── S04_TRT_02/
-│   └── S04_TRT_02.fastq.gz
+├── control1/
+│   └── control1.fastq.gz -> /path/to/run/control1.fastq.gz
+├── control2/
+│   └── control2.fastq.gz
+├── treatment1/
+│   └── treatment1.fastq.gz
+├── treatment2/
+│   └── treatment2.fastq.gz
 └── ...
 ```
 
@@ -100,11 +89,11 @@ Tab-separated. The first column holds the sample names (same as the folder names
 ignored.
 
 ```
-sample	Group
-S01_CTRL_01	CTRL
-S02_CTRL_02	CTRL
-S03_TRT_01	TRT
-S04_TRT_02	TRT
+sample	Group	age_weeks
+control1	control	6
+control2	control	6
+treatment1	treatment	8
+treatment2	treatment	8
 ```
 
 Every sample folder should have a row here, and the separators must be tabs, not spaces.
