@@ -139,6 +139,9 @@ output_dir/
 └── nf_work/                       # Nextflow work dir (large, can be deleted when finished)
 ```
 
+Example plots from a small demo run (5 control and 5 treatment samples) are shown under
+[Individual scripts](#individual-scripts).
+
 ## How the Nextflow step is run (handover)
 
 Step 1 starts another workflow manager, Nextflow. The rule `run_wf_metagenomics` is marked with
@@ -205,6 +208,8 @@ Reads **Bracken/Kraken2** report files (`*.kraken2_bracken.report`) from a direc
 - A **combined count table** (for DESeq2 or downstream analyses)  
 - A **stacked bar plot** showing the top 10 most abundant species per sample  
 
+![Composition plot from the demo run](docs/images/composition_plot.png)
+
 ---
 
 ### Alpha Diversity
@@ -230,6 +235,8 @@ Output:
 
 **Description:**  
 Calculates alpha diversity metrics (**Shannon**, **Simpson**, **Observed**, **Chao1**) from a species abundance table, and generates grouped boxplots with optional p-value annotations.
+
+![Alpha diversity from the demo run](docs/images/alpha_diversity_with_pvalues.png)
 
 ---
 
@@ -258,3 +265,6 @@ Output:
   
 **Description:**  
 Computes beta diversity metrics (**Bray–Curtis**, **Jaccard**, **Euclidean**, and **UniFrac**) from an abundance table, performs **Principal Coordinates Analysis (PCoA)**, and plots PCoA scatterplots with non-overlapping sample labels.
+
+![Beta diversity PCoA from the demo run](docs/images/beta_diversity_plots.png)
+
