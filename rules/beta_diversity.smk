@@ -12,7 +12,7 @@ rule beta_diversity:
         outdir = results_dir,
         group_col = "Group",
         metrics = "braycurtis,jaccard,euclidean",
-        clr_flags = "False,False,False"
+        clr_flags = "False,False,True"
     shell:
         """
         mkdir -p {params.outdir:q}

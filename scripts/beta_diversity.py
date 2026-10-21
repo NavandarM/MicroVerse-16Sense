@@ -11,6 +11,8 @@ import sys
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from scipy.spatial.distance import pdist, squareform
+from skbio import DistanceMatrix
 from skbio.diversity import beta_diversity
 from skbio.stats.ordination import pcoa
 from adjustText import adjust_text
@@ -47,6 +49,9 @@ def beta_diversity_coords(abund, meta, metric="braycurtis", group_col="Group", c
         if tree is None:
             raise ValueError(f"{metric} requires a phylogenetic tree (skbio.TreeNode).")
         dm = beta_diversity(metric, data.values, ids=data.index, tree=tree)
+    elif clr:
+        # skbio's beta_diversity rejects negative values, and CLR data has them
+        dm = DistanceMatrix(squareform(pdist(data.values, metric)), ids=data.index)
     else:
         dm = beta_diversity(metric, data.values, ids=data.index)
 
@@ -92,7 +97,7 @@ def plot_beta_diversity(abund, meta, output_dir, metrics, clr_flags, group_col="
 
         axes[i].set_xlabel(f"PC1 ({var_exp['PC1']:.2f}%)")
         axes[i].set_ylabel(f"PC2 ({var_exp['PC2']:.2f}%)")
-        axes[i].set_title(f"PCoA - {metric}")
+        axes[i].set_title(f"PCoA - {metric}" + (" (CLR)" if clr_flag else ""))
         axes[i].axhline(0, color="gray", ls="--", lw=0.5)
         axes[i].axvline(0, color="gray", ls="--", lw=0.5)
 
