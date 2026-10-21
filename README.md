@@ -266,7 +266,9 @@ Output:
 - beta_diversity_plots.pdf: PCoA scatterplots for the selected beta diversity metrics, colored by sample group, saved in the specified output directory.
   
 **Description:**  
-Computes beta diversity metrics (**Bray–Curtis**, **Jaccard**, **Euclidean**, and **UniFrac**) from an abundance table, performs **Principal Coordinates Analysis (PCoA)**, and plots PCoA scatterplots with non-overlapping sample labels.
+Computes beta diversity metrics (**Bray–Curtis**, **Jaccard**, **Euclidean**) from an abundance table, performs **Principal Coordinates Analysis (PCoA)**, and plots PCoA scatterplots with non-overlapping sample labels.
+
+UniFrac is not available: it needs a phylogenetic tree, and Kraken2/Bracken only give species names and counts.
 
 ![Beta diversity PCoA from the demo run](docs/images/beta_diversity_plots.png)
 

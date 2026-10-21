@@ -2,7 +2,7 @@
 """
 beta_diversity.py
 
-Compute beta diversity metrics (Bray-Curtis, Jaccard, Euclidean, UniFrac) from an abundance table,
+Compute beta diversity metrics (Bray-Curtis, Jaccard, Euclidean) from an abundance table,
 perform PCoA, and plot PCoA coordinates with non-overlapping sample labels.
 """
 
