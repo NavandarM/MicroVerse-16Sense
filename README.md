@@ -56,10 +56,14 @@ On an HPC module system, load the container runtime first, e.g. `module load app
 
 ```
 fastqs/
-├── CV0834m12wFec/
-│   └── CV0834m12wFec.fastq.gz
-├── FMTcc4w0864m11wFec/
-│   └── FMTcc4w0864m11wFec.fastq.gz
+├── control1/
+│   └── control1.fastq.gz
+├── control2/
+│   └── control2.fastq.gz
+├── treatment1/
+│   └── treatment1.fastq.gz
+├── treatment2/
+│   └── treatment2.fastq.gz
 └── ...
 ```
 
@@ -67,9 +71,11 @@ The metadata file is tab-separated. The first column holds the sample names (sam
 names), and one column holds the group used in the diversity plots (default `Group`):
 
 ```
-sample	Group	mouse_id	age_weeks
-CV0834m12wFec	CV	0834	12
-FMTcc4w0864m11wFec	FMTcc4w	0864	11
+sample	Group	age_weeks
+control1	control	6
+control2    control    6
+treatment1	treatment	8
+treatment2    treatment    8    
 ```
 
 ### Configuration (`config.yaml`)
