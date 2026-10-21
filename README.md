@@ -60,7 +60,7 @@ original files are fine:
 ```
 fastqs/
 ├── control1/
-│   └── control1.fastq.gz -> /path/to/run/control1.fastq.gz
+│   └── control1.fastq.gz
 ├── control2/
 │   └── control2.fastq.gz
 ├── treatment1/
