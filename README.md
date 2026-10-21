@@ -124,6 +124,8 @@ nextflow_config: ""
 | `nextflow_config` | optional | extra Nextflow config file, e.g. to run on a cluster (see below) |
 
 The group column, number of top species and beta metrics are set in `rules/*.smk` (`params:`).
+In the pipeline, Euclidean distance is computed on CLR-transformed counts (`clr_flags` in
+`rules/beta_diversity.smk`), so it reflects composition rather than sequencing depth.
 
 ### Output
 
