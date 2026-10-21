@@ -1,19 +1,21 @@
 rule beta_diversity:
     input:
-        output_dir + "flags/alpha_diversity.done"
+        os.path.join(flags_dir, "alpha_diversity.done")
     output:
-        flag = output_dir + "flags/beta_diversity.done"
+        flag = os.path.join(flags_dir, "beta_diversity.done")
     conda:
         "../envs/diversity_env.yaml"
     params:
-        abund = output_dir + "abundance_table_species.tsv",
-        meta = config['metadata_file'],
-        outdir = output_dir + "results",
+        script = os.path.join(scripts_dir, "beta_diversity.py"),
+        abund = os.path.join(output_dir, "abundance_table_species.tsv"),
+        meta = config["metadata_file"],
+        outdir = results_dir,
         group_col = "Group",
         metrics = "braycurtis,jaccard,euclidean",
         clr_flags = "False,False,False"
     shell:
         """
-        python scripts/beta_diversity.py {params.abund} {params.meta} {params.outdir} {params.group_col} {params.metrics} {params.clr_flags}
-        touch {output.flag}
+        mkdir -p {params.outdir:q}
+        python {params.script:q} {params.abund:q} {params.meta:q} {params.outdir:q} {params.group_col:q} {params.metrics:q} {params.clr_flags:q}
+        touch {output.flag:q}
         """
