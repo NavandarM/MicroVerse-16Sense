@@ -78,8 +78,11 @@ def plot_beta_diversity(abund, meta, output_dir, metrics, clr_flags, group_col="
             data=coords,
             x="PC1", y="PC2",
             hue=group_col, style=group_col,
-            s=80, alpha=0.8, palette="Set2", ax=axes[i]
+            s=80, alpha=0.8, palette="Set2", ax=axes[i], legend=(i == 0)
         )
+        if i == 0:
+            handles, labels = axes[i].get_legend_handles_labels()
+            axes[i].get_legend().remove()
 
         #non-overlapping labs
         texts = []
@@ -97,6 +100,9 @@ def plot_beta_diversity(abund, meta, output_dir, metrics, clr_flags, group_col="
         axes[j].set_visible(False)
 
     plt.tight_layout()
+    # same groups in every panel, so one legend for the whole figure
+    fig.legend(handles, labels, title=group_col, loc="center left",
+               bbox_to_anchor=(1.0, 0.5), frameon=False)
     output_file = os.path.join(output_dir, "beta_diversity_plots.pdf")
     os.makedirs(output_dir, exist_ok=True)
     plt.savefig(output_file, dpi=300, bbox_inches="tight")
